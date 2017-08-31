@@ -20,7 +20,7 @@ defmodule Crawler.Snapper.DirMaker do
   def make_dir(opts) do
     opts[:url]
     |> prep_filepath
-    |> build_save_path(opts[:save_to])
+    |> build_save_path(opts)
     |> make_save_path(opts[:save_to])
   end
 
@@ -30,8 +30,12 @@ defmodule Crawler.Snapper.DirMaker do
     |> PathFinder.find_path
   end
 
-  defp build_save_path(path, save_to) do
-    Path.join(save_to, path)
+  defp build_save_path(path, %{build_save_path_fn: build_save_path_fn, save_to: save_to}) do
+    build_save_path_fn.(save_to, path)
+  end
+
+  defp build_save_path(path, opts) do
+    Path.join(opts[:save_to], path)
   end
 
   defp make_save_path(path, save_to) do
